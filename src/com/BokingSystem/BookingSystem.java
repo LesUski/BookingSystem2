@@ -1,14 +1,15 @@
 package com.BokingSystem;
 
-import java.io.BufferedReader;
+import javafx.util.converter.LocalDateTimeStringConverter;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Currency;
 import java.util.Locale;
 import java.util.Scanner;
@@ -17,12 +18,10 @@ public class BookingSystem {
     public static Scanner sc = new Scanner(System.in);
     private static double price;
     private static LocalDateTime date;
-    public static final String CURRENCY_CONVERTER_API_API_KEY = "bc90f424957001330a57";
     private static HttpURLConnection connection;
     public static Currency euro = Currency.getInstance("EUR");
     public static Currency krona = Currency.getInstance("SEK");
-    static Locale currentLocale = new Locale("sv", "SE");
-
+    private static Locale currentLocale = new Locale("sv", "SE");
 
     public void menu() throws IOException {
         System.out.println("\n\t\tWelcome to Booking System!\n" +
@@ -45,7 +44,7 @@ public class BookingSystem {
     }
 
     public static void chosenCountry() throws IOException {
-        System.out.println("List of available countries: [1]Austria, [2]Denmark, [3]Estonia, [4]Finland, [5]France, [6]Germany, [7]Italy, [8]Spain\n" +
+        System.out.println("List of available countries: [1]Austria, [2]Germany, [3]Italy, [4]Spain\n" +
                 "press [0] to exit");
         System.out.print("Choose country: ");
         int input = sc.nextInt();
@@ -61,54 +60,27 @@ public class BookingSystem {
                 bookATicket();
                 break;
             case 2:
-                Denmark denmark = new Denmark("Denmark");
-                denmark.getTravellingOptions();
-                price = denmark.getPrice();
-                date = denmark.getDate();
-                bookATicket();
-                break;
-            case 3:
-                Estonia estonia = new Estonia("Estonia");
-                estonia.getTravellingOptions();
-                price = estonia.getPrice();
-                date = estonia.getDate();
-                bookATicket();
-                break;
-            case 4:
-                Finland finland = new Finland("Finland");
-                finland.getTravellingOptions();
-                price = finland.getPrice();
-                date = finland.getDate();
-                bookATicket();
-                break;
-            case 5:
-                France france = new France("France");
-                france.getTravellingOptions();
-                price = france.getPrice();
-                date = france.getDate();
-                bookATicket();
-                break;
-            case 6:
                 Germany germany = new Germany("Germany");
                 germany.getTravellingOptions();
                 price = germany.getPrice();
                 date = germany.getDate();
                 bookATicket();
                 break;
-            case 7:
+            case 3:
                 Italy italy = new Italy("Italy");
                 italy.getTravellingOptions();
                 price = italy.getPrice();
                 date = italy.getDate();
                 bookATicket();
                 break;
-            case 8:
+            case 4:
                 Spain spain = new Spain("Spain");
                 spain.getTravellingOptions();
                 price = spain.getPrice();
                 date = spain.getDate();
                 bookATicket();
                 break;
+
             default:
                 chosenCountry();
         }
@@ -128,6 +100,12 @@ public class BookingSystem {
         } else System.exit(0);
     }
 
+    public static String dateFormatter(LocalDateTime date) {
+        String formatedDate = DateTimeFormatter.ISO_LOCAL_DATE.format(date);
+
+        return formatedDate;
+    }
+
     public static void passengerDetails() throws IOException {
         System.out.println("How many tickets?");
         int input = sc.nextInt();
@@ -142,7 +120,7 @@ public class BookingSystem {
             System.out.println("This is a summary of Your booking:\n" +
                     "Destination: " + Country.getName() +
                     " for " + input + " passengers" +
-                    " on the " + date +
+                    " on the " + dateFormatter(date) +
                     " for a total of: " + displayCurrency(currentLocale, finalPriceInSEK));
         }
     }
@@ -191,12 +169,10 @@ public class BookingSystem {
     }
 
     public static double convertRateEUR_SEK(double price) throws IOException {
-
         return price*(rate(euro, krona));
     }
 
     static String displayCurrency(Locale currentLocale, double price) {
-        Currency currentCurrency = Currency.getInstance(currentLocale);
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(currentLocale);
         return currencyFormatter.format(price);
     }

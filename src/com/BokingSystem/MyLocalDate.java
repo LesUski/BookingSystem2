@@ -1,6 +1,7 @@
 package com.BokingSystem;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class MyLocalDate {
     int number;
@@ -27,6 +28,7 @@ public class MyLocalDate {
 
     @Override
     public String toString() {
-        return "No." + number + ", date: " + date + ", price: " + price + "SEK";
+        String strDate = DateTimeFormatter.ISO_LOCAL_DATE.format(date);
+        return "No." + number + ", date: " +  strDate + ", price: " + price + "EUR";
     }
 }

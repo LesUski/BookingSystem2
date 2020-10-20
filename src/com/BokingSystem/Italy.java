@@ -5,14 +5,13 @@ import java.io.FileNotFoundException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 
 public class Italy extends Country {
     public double price = 0;
     public LocalDateTime date;
+    Locale currentLocale = new Locale("de", "DE");
+    Currency c = Currency.getInstance(currentLocale);
 
     public Italy(String name) {
         super(name);
@@ -76,9 +75,9 @@ public class Italy extends Country {
             System.out.println("Could not find file " + file);
         }
 
-        MyLocalDate italyDate1 = new MyLocalDate(1, dates[0], 199);
+        MyLocalDate italyDate1 = new MyLocalDate(1, dates[0], 69);
         MyLocalDate italyDate2 = new MyLocalDate(2, dates[1], 99);
-        MyLocalDate italyDate3 = new MyLocalDate(3, dates[2], 299);
+        MyLocalDate italyDate3 = new MyLocalDate(3, dates[2], 59);
 
         ArrayList<MyLocalDate> italyList = new ArrayList<MyLocalDate>();
         italyList.add(italyDate1);
@@ -90,20 +89,11 @@ public class Italy extends Country {
         for(MyLocalDate date: italyList) {
             System.out.println(date.toString());
         }
-        int chosenDate = chooseDate(italyList);
-        if (chosenDate == 1) {
-            this.price = italyDate1.getPrice();
-            this.date = italyDate1.getDate();
-        } else if (chosenDate == 2) {
-            this.price = italyDate2.getPrice();
-            this.date = italyDate2.getDate();
-        } else if (chosenDate == 3) {
-            this.price = italyDate3.getPrice();
-            this.date = italyDate3.getDate();
-        }
+        chooseDate(italyList);
     }
 
-    public int chooseDate(ArrayList<MyLocalDate> listDate){
+    @Override
+    public void chooseDate(ArrayList<MyLocalDate> listDate){
         Scanner sc = new Scanner(System.in);
 
         System.out.print("Would you like to choose one of those days? Type the number here:");
@@ -113,70 +103,24 @@ public class Italy extends Country {
             listDate.stream().filter(myDate -> myDate.getNumber() == 1);
             System.out.print("You've chosen the ");
             listDate.stream().filter(myDate -> myDate.getNumber() == 1).forEach(System.out::println);
-//            price = listDate.get(input-1).getPrice();
-//            System.out.println(listDate.get(input-1).getPrice());
-            return input;
+            price = listDate.get(1).getPrice();
+            date = listDate.get(1).getDate();
+            System.out.println(listDate.get(1).getPrice());
+
         } else if (input == 2) {
             System.out.print("You've chosen the ");
             listDate.stream().filter(myDate -> myDate.getNumber() == 2).forEach(System.out::println);
-//            price = listDate.get(input-1).getPrice();
-//            System.out.println(listDate.get(input-1).getPrice());
-            return input;
+            price = listDate.get(2).getPrice();
+            date = listDate.get(2).getDate();
+            System.out.println(listDate.get(2).getPrice());
+
         } else if (input == 3) {
             System.out.print("You've chosen the ");
             listDate.stream().filter(myDate -> myDate.getNumber() == 3).forEach(System.out::println);
-//            price = listDate.get(input-1).getPrice();
-//            System.out.println(listDate.get(input-1).getPrice());
-            return input;
-        } else if (input == 4) {
-            System.out.print("You've chosen the ");
-            listDate.stream().filter(myDate -> myDate.getNumber() == 4).forEach(System.out::println);
-//            price = listDate.get(input-1).getPrice();
-//            System.out.println(listDate.get(input-1).getPrice());
-            return input;
-        }
-        return 0;
-    }
-    /*-------------------------------------------------------------
-                        Unused methods
-    ---------------------------------------------------------------
-     */
+            price = listDate.get(0).getPrice();
+            date = listDate.get(0).getDate();
+            System.out.println(listDate.get(0).getPrice());
 
-
-    @Override
-    public double getPriceForSpecificDate(LocalDateTime date) {
-        if(date.getDayOfWeek().getValue() == 1) {
-            price = 120;
-            return 120;
-        } else if (date.getDayOfWeek().getValue() == 5) {
-            price = 135;
-            return 135;
-        } else if (date.getDayOfWeek().getValue() == 6 || date.getDayOfWeek().getValue() == 7) {
-            price = 142;
-            return 142;
-        } else
-            price = 125;
-        return 125;
-    }
-
-    @Override
-    public void chooseDate(LocalDateTime[] dates) {
-        System.out.print("Type one of the above options from the list here: ");
-        Scanner sc = new Scanner(System.in);
-        int input = sc.nextInt();
-
-        if(input == 1) {
-            price = getPriceForSpecificDate(dates[0]);
-            this.date = dates[0];
-            System.out.println(getPriceForSpecificDate(dates[0]) + " SEK");
-        } else if(input == 2) {
-            price = getPriceForSpecificDate(dates[1]);
-            this.date = dates[1];
-            System.out.println(getPriceForSpecificDate(dates[1]) + " SEK");
-        } else if (input == 3) {
-            price = getPriceForSpecificDate(dates[2]);
-            this.date = dates[2];
-            System.out.println(getPriceForSpecificDate(dates[2]) + " SEK");
         }
     }
 }

@@ -20,6 +20,8 @@ class BookingSystemTest {
 
     @org.junit.jupiter.api.Test
     void rate() {
+
+
     }
 
     @org.junit.jupiter.api.Test
