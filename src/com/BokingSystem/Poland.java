@@ -7,23 +7,26 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
-
-public class Spain extends Country {
-
+public class Poland{
+    public String name;
     public double price = 0;
     public LocalDateTime date;
     private double lowestPrice;
-    Locale currentLocale = new Locale("es", "ES");
-    private Currency c = Currency.getInstance(currentLocale);
-    ArrayList<MyLocalDate> spainList = new ArrayList<MyLocalDate>();
+    ArrayList<MyLocalDate> austriaList = new ArrayList<MyLocalDate>();
+    Locale currentLocale = new Locale("de", "AT");
+    Currency c = Currency.getInstance(currentLocale);
 
-    public Spain(String name) {
-        super(name);
+    Poland(String name) {
+        this.name = name;
         this.price = price;
         this.date = date;
+
     }
 
-    @Override
+    public String getName() {
+        return name;
+    }
+
     public double getPrice() {
         return price;
     }
@@ -32,8 +35,8 @@ public class Spain extends Country {
         return date;
     }
 
-    @Override
-    public void getTravellingOptions(){
+
+    public void getTravellingOptions() {
         Scanner sc = new Scanner(System.in);
         System.out.println("Those are available travelling options to " + getName() + ":\n" +
                 "[1] Flight\n" +
@@ -42,21 +45,21 @@ public class Spain extends Country {
         System.out.print("Type your choice here: ");
         int input = sc.nextInt();
         if (input == 1) {
-            File file = new File("src/com/BokingSystem/DateFiles/spainDatesFlight.txt");
+            File file = new File("src/com/BokingSystem/DateFiles/austriaDatesFlight.txt");
             getDates(file);
         }
         if (input == 2) {
-            File file = new File("src/com/BokingSystem/DateFiles/spainDatesTrain.txt");
+            File file = new File("src/com/BookingSystem/DateFiles/austriaDatesTrain.txt");
             getDates(file);
         }
         if (input == 3) {
-            File file = new File("src/com/BokingSystem/DateFiles/spainDatesBus.txt");
+            File file = new File("src/com/BookingSystem/DateFiles/austriaDatesBus.txt");
             getDates(file);
         }
     }
 
-    @Override
-    public void getDates(File file) {
+
+    public LocalDateTime[] getDates(File file) {
         String[] dateStrings = new String[3];
         LocalDateTime[] dates = new LocalDateTime[dateStrings.length];
 
@@ -75,22 +78,31 @@ public class Spain extends Country {
         } catch (FileNotFoundException e) {
             System.out.println("Could not find file " + file);
         }
-
-        spainList.add(new MyLocalDate(1, dates[0], 89));
-        spainList.add(new MyLocalDate(2, dates[1], 39));
-        spainList.add(new MyLocalDate(3, dates[2], 129));
-
-        System.out.println("List of available dates and prices:");
-        Collections.sort(spainList, (o1, o2) -> (int) (o1.getPrice()-o2.getPrice()));
-
-        for(MyLocalDate date: spainList) {
-            System.out.println(date.toString());
-        }
-        chooseDate(spainList);
+        return dates;
     }
 
-    @Override
-    public void chooseDate(ArrayList<MyLocalDate> listDate){
+    public ArrayList<MyLocalDate> instantiatePrices(LocalDateTime[] dates) {
+
+        MyLocalDate italyDate1 = new MyLocalDate(1, dates[0], 109);
+        MyLocalDate italyDate2 = new MyLocalDate(2, dates[1], 59);
+        MyLocalDate italyDate3 = new MyLocalDate(3, dates[2], 29);
+
+        austriaList.add(italyDate1);
+        austriaList.add(italyDate2);
+        austriaList.add(italyDate3);
+        System.out.println("List of available dates and prices:");
+        Collections.sort(austriaList, (o1, o2) -> (int) (o1.getPrice()-o2.getPrice()));
+
+        for(MyLocalDate date: austriaList) {
+            System.out.println(date.toString());
+        }
+        chooseDate(austriaList);
+
+        return austriaList;
+    }
+
+
+    public void chooseDate(ArrayList<MyLocalDate> listDate) {
 
         Scanner sc = new Scanner(System.in);
 
@@ -101,27 +113,30 @@ public class Spain extends Country {
             listDate.stream().filter(myDate -> myDate.getNumber() == 1);
             System.out.print("You've chosen the ");
             listDate.stream().filter(myDate -> myDate.getNumber() == 1).forEach(System.out::println);
-            price = listDate.get(1).getPrice();
-            date = listDate.get(1).getDate();
+            price = listDate.get(2).getPrice();
+            date = listDate.get(2).getDate();
 
         } else if (input == 2) {
             System.out.print("You've chosen the ");
             listDate.stream().filter(myDate -> myDate.getNumber() == 2).forEach(System.out::println);
-            price = listDate.get(0).getPrice();
-            date = listDate.get(0).getDate();
+            price = listDate.get(1).getPrice();
+            date = listDate.get(1).getDate();
 
         } else if (input == 3) {
             System.out.print("You've chosen the ");
             listDate.stream().filter(myDate -> myDate.getNumber() == 3).forEach(System.out::println);
-            price = listDate.get(2).getPrice();
-            date = listDate.get(2).getDate();
+            price = listDate.get(0).getPrice();
+            date = listDate.get(0).getDate();
+
         }
     }
 
-    @Override
-    public double getCheapestTickets() {
-        Collections.sort(spainList, (o1, o2) -> (int) (o1.getPrice()-o2.getPrice()));
 
-        return lowestPrice = spainList.get(0).getPrice();
+    public double getCheapestTickets() {
+        Collections.sort(austriaList, (o1, o2) -> (int) (o1.getPrice()-o2.getPrice()));
+
+        return lowestPrice = austriaList.get(0).getPrice();
     }
+
+
 }

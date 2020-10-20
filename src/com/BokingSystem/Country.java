@@ -7,11 +7,13 @@ import java.util.ArrayList;
 abstract class Country {
     private static String name;
     private double price;
+    private static double lowestPrice;
     private static LocalDateTime date;
 
     public Country(String name) {
         this.price = price;
         this.name = name;
+        this.lowestPrice = lowestPrice;
     }
 
     public static String getName() {
@@ -23,10 +25,12 @@ abstract class Country {
     public LocalDateTime getDate(){
         return date;
     }
+    public static double getLowestPrice() {return lowestPrice;}
 
     public abstract void getDates(File file);
     public abstract void getTravellingOptions();
     public abstract void chooseDate(ArrayList<MyLocalDate> listDate);
+    public abstract double getCheapestTickets();
 
 
 }

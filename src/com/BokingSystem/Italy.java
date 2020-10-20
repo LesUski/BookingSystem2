@@ -10,8 +10,10 @@ import java.util.*;
 public class Italy extends Country {
     public double price = 0;
     public LocalDateTime date;
+    private double lowestPrice;
     Locale currentLocale = new Locale("de", "DE");
     Currency c = Currency.getInstance(currentLocale);
+    ArrayList<MyLocalDate> italyList = new ArrayList<MyLocalDate>();
 
     public Italy(String name) {
         super(name);
@@ -49,7 +51,6 @@ public class Italy extends Country {
             File file = new File("src/com/BokingSystem/DateFiles/italyDatesBus.txt");
             getDates(file);
         }
-        return;
     }
 
     @Override
@@ -58,7 +59,6 @@ public class Italy extends Country {
         LocalDateTime[] dates = new LocalDateTime[dateStrings.length];
 
         try {
-            //System.out.println("Those are the available dates: ");
             Scanner scn = new Scanner(file);
             dateStrings = scn.nextLine().split(", ");
 
@@ -66,7 +66,6 @@ public class Italy extends Country {
 
             for (int i = 0; i < dates.length; i++) {
                 dates[i] = LocalDateTime.parse(dateStrings[i], DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-                //System.out.println("[" + (i+1) + "] " +  dates[i]);
             }
 
         } catch (DateTimeParseException e) {
@@ -75,14 +74,10 @@ public class Italy extends Country {
             System.out.println("Could not find file " + file);
         }
 
-        MyLocalDate italyDate1 = new MyLocalDate(1, dates[0], 69);
-        MyLocalDate italyDate2 = new MyLocalDate(2, dates[1], 99);
-        MyLocalDate italyDate3 = new MyLocalDate(3, dates[2], 59);
+        italyList.add(new MyLocalDate(1, dates[0], 69));
+        italyList.add(new MyLocalDate(2, dates[1], 99));
+        italyList.add(new MyLocalDate(3, dates[2], 59));
 
-        ArrayList<MyLocalDate> italyList = new ArrayList<MyLocalDate>();
-        italyList.add(italyDate1);
-        italyList.add(italyDate2);
-        italyList.add(italyDate3);
         System.out.println("List of available dates and prices:");
         Collections.sort(italyList, (o1, o2) -> (int) (o1.getPrice()-o2.getPrice()));
 
@@ -105,22 +100,25 @@ public class Italy extends Country {
             listDate.stream().filter(myDate -> myDate.getNumber() == 1).forEach(System.out::println);
             price = listDate.get(1).getPrice();
             date = listDate.get(1).getDate();
-            System.out.println(listDate.get(1).getPrice());
 
         } else if (input == 2) {
             System.out.print("You've chosen the ");
             listDate.stream().filter(myDate -> myDate.getNumber() == 2).forEach(System.out::println);
             price = listDate.get(2).getPrice();
             date = listDate.get(2).getDate();
-            System.out.println(listDate.get(2).getPrice());
 
         } else if (input == 3) {
             System.out.print("You've chosen the ");
             listDate.stream().filter(myDate -> myDate.getNumber() == 3).forEach(System.out::println);
             price = listDate.get(0).getPrice();
             date = listDate.get(0).getDate();
-            System.out.println(listDate.get(0).getPrice());
-
         }
+    }
+
+    @Override
+    public double getCheapestTickets() {
+        Collections.sort(italyList, (o1, o2) -> (int) (o1.getPrice()-o2.getPrice()));
+
+        return lowestPrice = italyList.get(0).getPrice();
     }
 }

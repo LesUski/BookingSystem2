@@ -10,8 +10,10 @@ import java.util.*;
 public class Germany extends Country {
     public double price = 0;
     public LocalDateTime date;
+    private double lowestPrice;
     Locale currentLocale = new Locale("de", "DE");
     Currency c = Currency.getInstance(currentLocale);
+    ArrayList<MyLocalDate> germanyList = new ArrayList<MyLocalDate>();
 
     public Germany(String name) {
         super(name);
@@ -49,7 +51,6 @@ public class Germany extends Country {
             File file = new File("src/com/BokingSystem/DateFiles/germanyDatesBus.txt");
             getDates(file);
         }
-        return;
     }
 
     @Override
@@ -73,10 +74,10 @@ public class Germany extends Country {
             System.out.println("Could not find file " + file);
         }
 
-        ArrayList<MyLocalDate> germanyList = new ArrayList<MyLocalDate>();
-        germanyList.add(new MyLocalDate(1, dates[0], 199));
-        germanyList.add(new MyLocalDate(2, dates[1], 99));
-        germanyList.add(new MyLocalDate(3, dates[2], 299));
+
+        germanyList.add(new MyLocalDate(1, dates[0], 44));
+        germanyList.add(new MyLocalDate(2, dates[1], 32));
+        germanyList.add(new MyLocalDate(3, dates[2], 35));
 
         System.out.println("List of available dates and prices:");
         Collections.sort(germanyList, (o1, o2) -> (int) (o1.getPrice()-o2.getPrice()));
@@ -93,34 +94,37 @@ public class Germany extends Country {
 
         System.out.print("Would you like to choose one of those days? Type the number here:");
 
-        try {
             int input = sc.nextInt();
+        try {
             if (input == 1) {
                 listDate.stream().filter(myDate -> myDate.getNumber() == 1);
                 System.out.print("You've chosen the ");
                 listDate.stream().filter(myDate -> myDate.getNumber() == 1).forEach(System.out::println);
                 listDate.stream().filter(myDate -> myDate.getNumber() == 1).forEach(System.out::println);
-                price = listDate.get(1).getPrice();
-                date = listDate.get(1).getDate();
-                System.out.println(listDate.get(1).getPrice() + c.getCurrencyCode());
+                price = listDate.get(2).getPrice();
+                date = listDate.get(2).getDate();
 
             } else if (input == 2) {
                 System.out.print("You've chosen the ");
                 listDate.stream().filter(myDate -> myDate.getNumber() == 2).forEach(System.out::println);
                 price = listDate.get(0).getPrice();
                 date = listDate.get(0).getDate();
-                System.out.println(listDate.get(0).getPrice() + c.getCurrencyCode());
 
             } else if (input == 3) {
                 System.out.print("You've chosen the ");
                 listDate.stream().filter(myDate -> myDate.getNumber() == 3).forEach(System.out::println);
-                price = listDate.get(2).getPrice();
-                date = listDate.get(2).getDate();
-                System.out.println(listDate.get(2).getPrice() + c.getCurrencyCode());
+                price = listDate.get(1).getPrice();
+                date = listDate.get(1).getDate();
             }
         } catch (InputMismatchException e) {
             throw new InputMismatchException("Type a value between 1 and 3");
             
         }
+    }
+    @Override
+    public double getCheapestTickets() {
+        Collections.sort(germanyList, (o1, o2) -> (int) (o1.getPrice()-o2.getPrice()));
+
+        return lowestPrice = germanyList.get(0).getPrice();
     }
 }

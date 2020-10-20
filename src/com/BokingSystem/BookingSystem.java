@@ -1,7 +1,5 @@
 package com.BokingSystem;
 
-import javafx.util.converter.LocalDateTimeStringConverter;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -10,18 +8,17 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Currency;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BookingSystem {
     public static Scanner sc = new Scanner(System.in);
     private static double price;
+    private static double lowestPrice;
     private static LocalDateTime date;
-    private static HttpURLConnection connection;
     public static Currency euro = Currency.getInstance("EUR");
     public static Currency krona = Currency.getInstance("SEK");
-    private static Locale currentLocale = new Locale("sv", "SE");
+    private static final Locale currentLocale = new Locale("sv", "SE");
 
     public void menu() throws IOException {
         System.out.println("\n\t\tWelcome to Booking System!\n" +
@@ -37,7 +34,7 @@ public class BookingSystem {
             case 1:
                 chosenCountry();
             case 2:
-                //getCheapestTickets();
+                getLastMinuteTicket();
             case 3:
                 break;
         }
@@ -166,6 +163,29 @@ public class BookingSystem {
             e.printStackTrace();
         }
         return 0.0;
+    }
+
+    void getLastMinuteTicket() {
+        Austria austria = new Austria("Austria");
+        double austriaTicket = austria.getCheapestTickets();
+        Germany germany = new Germany("Germany");
+        double germanyTicket = germany.getCheapestTickets();
+        Italy italy = new Italy("Italy");
+        double italyTicket = italy.getCheapestTickets();
+        Spain spain = new Spain("Spain");
+        double spainTicket = spain.getCheapestTickets();
+
+        ArrayList<Double> ticketsList = new ArrayList<>();
+
+        ticketsList.add(austriaTicket);
+        ticketsList.add(germanyTicket);
+        ticketsList.add(italyTicket);
+        ticketsList.add(spainTicket);
+
+        ArrayList sortedTicketList = ticketsList.stream().sorted().collect(Collectors.toCollection(ArrayList::new));
+
+        System.out.println("Cheapest ticket on our service is a " + sortedTicketList.get(0));
+
     }
 
     public static double convertRateEUR_SEK(double price) throws IOException {
