@@ -30,6 +30,7 @@ abstract class Country {
     public abstract void getDates(File file);
     public abstract void getTravellingOptions();
     public abstract void chooseDate(ArrayList<MyLocalDate> listDate);
+
     public abstract double getCheapestTickets();
 
 

@@ -3,18 +3,14 @@ package com.BokingSystem;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.NumberFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class BookingSystem {
-    public static Scanner sc = new Scanner(System.in);
     private static double price;
-    private static double lowestPrice;
     private static LocalDateTime date;
     public static Currency euro = Currency.getInstance("EUR");
     public static Currency krona = Currency.getInstance("SEK");
@@ -23,107 +19,117 @@ public class BookingSystem {
     public void menu() throws IOException {
         System.out.println("\n\t\tWelcome to Booking System!\n" +
                 "=======================================================\n" +
-                "Please choose your option:");
-        System.out.println("Choose [1] To choose country of destination.\n" +
+                "Please choose your option:\n" +
+                "Choose [1] To choose country of destination.\n" +
                 "Choose [2] To choose the cheapest tickets (last minute)\n" +
                 "Choose [3] To exit\n" +
                 "=======================================================");
-        System.out.print("Type here: ");
-        int input = sc.nextInt();
-        switch (input) {
-            case 1:
-                chosenCountry();
-            case 2:
-                getLastMinuteTicket();
-            case 3:
-                break;
-        }
+
+        int input = getInt();
+
+            switch (input) {
+                case 1:
+                    chosenCountry();
+                    break;
+                case 2:
+                    //getLastMinuteTicket();
+                    break;
+                case 3:
+                    break;
+                default:
+                    System.err.println("Please provide a number between 1 and 3");
+                    menu();
+                    break;
+            }
     }
 
     public static void chosenCountry() throws IOException {
         System.out.println("List of available countries: [1]Austria, [2]Germany, [3]Italy, [4]Spain\n" +
-                "press [0] to exit");
-        System.out.print("Choose country: ");
-        int input = sc.nextInt();
+                "press [5] to exit");
 
-        switch (input) {
-            case 0:
-                System.exit(0);
-            case 1:
-                Austria austria = new Austria("Austria");
-                austria.getTravellingOptions();
-                price = austria.getPrice();
-                date = austria.getDate();
-                bookATicket();
-                break;
-            case 2:
-                Germany germany = new Germany("Germany");
-                germany.getTravellingOptions();
-                price = germany.getPrice();
-                date = germany.getDate();
-                bookATicket();
-                break;
-            case 3:
-                Italy italy = new Italy("Italy");
-                italy.getTravellingOptions();
-                price = italy.getPrice();
-                date = italy.getDate();
-                bookATicket();
-                break;
-            case 4:
-                Spain spain = new Spain("Spain");
-                spain.getTravellingOptions();
-                price = spain.getPrice();
-                date = spain.getDate();
-                bookATicket();
-                break;
+        int input = getInt();
 
-            default:
-                chosenCountry();
-        }
+            switch (input) {
+                case 1 -> {
+                    Austria austria = new Austria("Austria");
+                    austria.getTravellingOptions();
+                    price = austria.getPrice();
+                    date = austria.getDate();
+                    bookATicket();
+                    break;
+                }
+                case 2 -> {
+                    Germany germany = new Germany("Germany");
+                    germany.getTravellingOptions();
+                    price = germany.getPrice();
+                    date = germany.getDate();
+                    bookATicket();
+                    break;
+                }
+                case 3 -> {
+                    Italy italy = new Italy("Italy");
+                    italy.getTravellingOptions();
+                    price = italy.getPrice();
+                    date = italy.getDate();
+                    bookATicket();
+                    break;
+                }
+                case 4 -> {
+                    Spain spain = new Spain("Spain");
+                    spain.getTravellingOptions();
+                    price = spain.getPrice();
+                    date = spain.getDate();
+                    bookATicket();
+                    break;
+                }
+                case 5 -> System.exit(0);
+                default -> {
+                    System.err.println("Please provide a number between 1 and 5");
+                    chosenCountry();
+                    break;
+                }
+            }
     }
 
     public static void bookATicket() throws IOException {
-        System.out.println("Would you like to book that ticket?");
-        System.out.println("Press [y] to print ticket or [b] to change date or anything else to exit");
-        System.out.print("Type here:");
-        String input = sc.next();
+        System.out.println("Would you like to book that ticket?\n" +
+                "Press [y] to print ticket or [b] to change date or anything else to exit");
+        String input = getString();
         if (input.equals("y")) {
             passengerDetails();
-            System.out.println("");
-
+            System.err.println("");
         } else if (input.equals("b")) {
-            return;
-        } else System.exit(0);
-    }
-
-    public static String dateFormatter(LocalDateTime date) {
-        String formatedDate = DateTimeFormatter.ISO_LOCAL_DATE.format(date);
-
-        return formatedDate;
+           // Country.getTravellingOptions();
+        } else {
+            System.out.println("Incorrect input, please answer [y] for yes");
+            bookATicket();
+        }
     }
 
     public static void passengerDetails() throws IOException {
         System.out.println("How many tickets?");
-        int input = sc.nextInt();
-        double totalPrice = input * price;
-        System.out.println("You've chosen to book " + input + " tickets. Your price will be " + totalPrice + euro);
-        System.out.println("Enter name for a booking person: ");
-        String name = sc.next();
-        System.out.println("Fetching the latest exchange rate to your currency...");
-        double finalPriceInSEK = input*convertRateEUR_SEK(price);
-        System.out.println("All right " + name + "! We've got the booking prepared and ready! Press [p] to print ticket");
-        if(sc.next().equals("p")) {
-            System.out.println("This is a summary of Your booking:\n" +
-                    "Destination: " + Country.getName() +
-                    " for " + input + " passengers" +
-                    " on the " + dateFormatter(date) +
-                    " for a total of: " + displayCurrency(currentLocale, finalPriceInSEK));
+        int input = getInt();
+        if (input <= 0) {
+            System.out.println("Wrong input! Minimum value is 1!");
+            passengerDetails();
+        } else {
+            double totalPrice = input * price;
+            System.out.printf("You've chosen to book %d tickets. Your price will be " + totalPrice + euro +
+                       "\nPlease enter name for a booking person. ", input);
+            String name = getString();
+            System.out.println("Fetching the latest exchange rate to your currency...");
+            double finalPriceInSEK = input*convertRateEUR_SEK(price);
+
+            System.out.printf("All right %s! We've got the booking prepared and ready!%n" +
+                        "This is a summary of Your booking:%n" +
+                        "Destination: " + Country.getName() +
+                        " for %d passengers" +
+                        " on the " + dateFormatter(date) +
+                        " for a total of: " + displayCurrency(finalPriceInSEK),name, input);
         }
     }
 
-    static double rate(Currency from, Currency to) throws IOException{
-
+    static double rate(Currency from, Currency to){
         String API_KEY = "bc90f424957001330a57";
         String USER_AGENT_ID = "Java/"
                 + System.getProperty("java.version");
@@ -156,45 +162,76 @@ public class BookingSystem {
                         + " returned status " + status;
                 throw new RuntimeException(excMsg);
             }
-
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
         return 0.0;
     }
 
-    void getLastMinuteTicket() {
-        Austria austria = new Austria("Austria");
-        double austriaTicket = austria.getCheapestTickets();
-        Germany germany = new Germany("Germany");
-        double germanyTicket = germany.getCheapestTickets();
-        Italy italy = new Italy("Italy");
-        double italyTicket = italy.getCheapestTickets();
-        Spain spain = new Spain("Spain");
-        double spainTicket = spain.getCheapestTickets();
-
-        ArrayList<Double> ticketsList = new ArrayList<>();
-
-        ticketsList.add(austriaTicket);
-        ticketsList.add(germanyTicket);
-        ticketsList.add(italyTicket);
-        ticketsList.add(spainTicket);
-
-        ArrayList sortedTicketList = ticketsList.stream().sorted().collect(Collectors.toCollection(ArrayList::new));
-
-        System.out.println("Cheapest ticket on our service is a " + sortedTicketList.get(0));
-
+//    void getLastMinuteTicket() {
+//        Austria austria = new Austria("Austria");
+//        double austriaTicket = austria.getCheapestTickets();
+//        Germany germany = new Germany("Germany");
+//        double germanyTicket = germany.getCheapestTickets();
+//        Italy italy = new Italy("Italy");
+//        double italyTicket = italy.getCheapestTickets();
+//        Spain spain = new Spain("Spain");
+//        double spainTicket = spain.getCheapestTickets();
+//
+//        ArrayList<Double> ticketsList = new ArrayList<>();
+//
+//        ticketsList.add(austriaTicket);
+//        ticketsList.add(germanyTicket);
+//        ticketsList.add(italyTicket);
+//        ticketsList.add(spainTicket);
+//
+//        ArrayList sortedTicketList = ticketsList.stream().sorted().collect(Collectors.toCollection(ArrayList::new));
+//
+//        System.out.println("Cheapest ticket on our service is a " + sortedTicketList.get(0));
+//
+//    }
+    public static String dateFormatter(LocalDateTime date) {
+        return DateTimeFormatter.ISO_LOCAL_DATE.format(date);
     }
 
-    public static double convertRateEUR_SEK(double price) throws IOException {
+    public static double convertRateEUR_SEK(double price) {
         return price*(rate(euro, krona));
     }
 
-    static String displayCurrency(Locale currentLocale, double price) {
-        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(currentLocale);
+    static String displayCurrency(double price) {
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(BookingSystem.currentLocale);
         return currencyFormatter.format(price);
+    }
+
+    private static String getString() {
+        Scanner s = new Scanner(System.in);
+        System.out.println("Type here: ");
+        String string;
+        try {
+            string = s.next();
+            if (string != null) {
+                return string;
+            } else {
+                System.out.println("NPE! Please type your answer: ");
+                string = s.next();
+            }
+        } catch (InputMismatchException e) {
+            return "Incorrect answer";
+        }
+        return string;
+    }
+
+    private static int getInt() {
+        Scanner s = new Scanner(System.in);
+        System.out.print("Please type your choice here: ");
+        while(true) {
+            try {
+                return s.nextInt();
+            } catch (InputMismatchException e) {
+                s.nextLine();
+                System.err.println("Incorrect input! Type in a positive number");
+            }
+        }
     }
 
     public BookingSystem() throws IOException {
