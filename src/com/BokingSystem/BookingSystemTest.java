@@ -2,7 +2,11 @@ package com.BokingSystem;
 
 import org.junit.jupiter.api.Test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Currency;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,17 +17,38 @@ class BookingSystemTest {
     public static Currency krona = Currency.getInstance("SEK");
     private static final double TEST_DELTA = 0.9;
 
-    @org.junit.jupiter.api.Test
-    void chosenCountry() {
+    @Test
+    void checkIfConvertToArrayThrowsException() {
+        File file = new File("src/com/BokingSystem/DateFiles/austriaDatesFlight.tx");
+        Austria austriaTest = new Austria("AustriaTest");
+        assertThrows(FileNotFoundException.class, () -> austriaTest.convertToArray(file));
     }
 
-    @org.junit.jupiter.api.Test
-    void bookATicket() {
+    @Test
+    void checkFormatFromDateFormatter() {
+        LocalDateTime date = LocalDateTime.parse("2021-03-04 06:10", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+
+        assertEquals("2021-03-04", BookingSystem.dateFormatter(date));
     }
 
-    @org.junit.jupiter.api.Test
-    void passengerDetails() {
+    @Test
+    void testGetRateFromURL() {
+        double expected = 10.341576;
+        double actual = BookingSystem.getRateFromURL(euro, krona);
+        assertEquals(expected, actual, TEST_DELTA);
     }
+    
+
+    @Test
+    void testConvertRateEUR_SEK() {
+        double price = 10;
+        assertEquals(103.4, BookingSystem.convertRateEUR_SEK(price), TEST_DELTA);
+    }
+
+//    @Test
+//    void checkExceptionInSaveToFile() {
+//        
+//    }
 
 //    @Test
 //    void testRateConnectionStatus() throws IOException {
@@ -31,17 +56,9 @@ class BookingSystemTest {
 //        int statusActual = BookingSystem.rate(euro,krona);
 //        assertEquals(statusExpected, statusActual);
 //    }
-
-    @Test
-    void testRate() throws IOException {
-
-        double expected = 10.341576;
-        double actual = BookingSystem.rate(euro, krona);
-        assertEquals(expected, actual, TEST_DELTA);
-    }
-
-    @org.junit.jupiter.api.Test
-    void convertPrice() {
-    }
+//    @Test
+//    void checkExceptionInGetRateFromURL() {
+//    assertThrows(IOException.class, () -> BookingSystem.getRateFromURL(euro, e));
+//    }
 
 }

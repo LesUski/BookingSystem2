@@ -1,7 +1,6 @@
 package com.BokingSystem;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.NumberFormat;
@@ -16,120 +15,106 @@ public class BookingSystem {
     public static Currency krona = Currency.getInstance("SEK");
     private static final Locale currentLocale = new Locale("sv", "SE");
 
-    public void menu() throws IOException {
+    private void menu() throws FileNotFoundException {
         System.out.println("\n\t\tWelcome to Booking System!\n" +
                 "=======================================================\n" +
                 "Please choose your option:\n" +
                 "Choose [1] To choose country of destination.\n" +
-                "Choose [2] To choose the cheapest tickets (last minute)\n" +
-                "Choose [3] To exit\n" +
+                "Choose [2] To exit\n" +
                 "=======================================================");
-
-        int input = getInt();
-
-            switch (input) {
-                case 1:
-                    chosenCountry();
-                    break;
-                case 2:
-                    //getLastMinuteTicket();
-                    break;
-                case 3:
-                    break;
-                default:
-                    System.err.println("Please provide a number between 1 and 3");
-                    menu();
-                    break;
+        while (true) {
+            switch (getInt()) {
+                case 1 -> chosenCountry();
+                case 2 -> {
+                    System.out.println("Exiting...");
+                    return;
+                }
+                default -> {
+                    System.err.println("Please provide a number between 1 and 2");
+                    System.out.println("=======================================================");
+                }
             }
-    }
+        }
+}
 
-    public static void chosenCountry() throws IOException {
+    private static void chosenCountry() throws FileNotFoundException {
         System.out.println("List of available countries: [1]Austria, [2]Germany, [3]Italy, [4]Spain\n" +
                 "press [5] to exit");
 
-        int input = getInt();
-
-            switch (input) {
+        while(true) {
+            switch (getInt()) {
                 case 1 -> {
                     Austria austria = new Austria("Austria");
                     austria.getTravellingOptions();
                     price = austria.getPrice();
                     date = austria.getDate();
-                    bookATicket();
-                    break;
+                    passengerDetails();
                 }
                 case 2 -> {
                     Germany germany = new Germany("Germany");
                     germany.getTravellingOptions();
                     price = germany.getPrice();
                     date = germany.getDate();
-                    bookATicket();
-                    break;
+                    passengerDetails();
                 }
                 case 3 -> {
                     Italy italy = new Italy("Italy");
                     italy.getTravellingOptions();
                     price = italy.getPrice();
                     date = italy.getDate();
-                    bookATicket();
-                    break;
+                    passengerDetails();
                 }
                 case 4 -> {
                     Spain spain = new Spain("Spain");
                     spain.getTravellingOptions();
                     price = spain.getPrice();
                     date = spain.getDate();
-                    bookATicket();
-                    break;
+                    passengerDetails();
                 }
-                case 5 -> System.exit(0);
+                case 5 -> {
+                    System.out.println("Exiting...");
+                    return;
+                }
                 default -> {
                     System.err.println("Please provide a number between 1 and 5");
-                    chosenCountry();
-                    break;
+                    System.out.println("=======================================================");
                 }
             }
-    }
-
-    public static void bookATicket() throws IOException {
-        System.out.println("Would you like to book that ticket?\n" +
-                "Press [y] to print ticket or [b] to change date or anything else to exit");
-        String input = getString();
-        if (input.equals("y")) {
-            passengerDetails();
-            System.err.println("");
-        } else if (input.equals("b")) {
-           // Country.getTravellingOptions();
-        } else {
-            System.out.println("Incorrect input, please answer [y] for yes");
-            bookATicket();
         }
     }
 
-    public static void passengerDetails() throws IOException {
+    private static void passengerDetails(){
         System.out.println("How many tickets?");
-        int input = getInt();
-        if (input <= 0) {
-            System.out.println("Wrong input! Minimum value is 1!");
+        int numberOfTickets = getInt();
+        if (numberOfTickets <= 0) {
+            System.out.println("Wrong number of tickets! Minimum value is 1!");
             passengerDetails();
         } else {
-            double totalPrice = input * price;
+            double totalPrice = numberOfTickets * price;
+
             System.out.printf("You've chosen to book %d tickets. Your price will be " + totalPrice + euro +
-                       "\nPlease enter name for a booking person. ", input);
+                       "\nPlease enter name for a booking person. ", numberOfTickets);
             String name = getString();
             System.out.println("Fetching the latest exchange rate to your currency...");
-            double finalPriceInSEK = input*convertRateEUR_SEK(price);
+            double finalPriceInSEK = numberOfTickets*convertRateEUR_SEK(price);
 
             System.out.printf("All right %s! We've got the booking prepared and ready!%n" +
                         "This is a summary of Your booking:%n" +
                         "Destination: " + Country.getName() +
                         " for %d passengers" +
                         " on the " + dateFormatter(date) +
-                        " for a total of: " + displayCurrency(finalPriceInSEK),name, input);
+                        " for a total of: " + displayCurrency(finalPriceInSEK), name, numberOfTickets);
+            saveToFile(finalPriceInSEK, name, numberOfTickets);
         }
+        System.exit(0);
     }
 
-    static double rate(Currency from, Currency to){
+
+
+    /**
+     * This fetches the current currency ratio from API's URL address.
+     */
+    public static double getRateFromURL(Currency from, Currency to){
         String API_KEY = "bc90f424957001330a57";
         String USER_AGENT_ID = "Java/"
                 + System.getProperty("java.version");
@@ -168,37 +153,30 @@ public class BookingSystem {
         return 0.0;
     }
 
-//    void getLastMinuteTicket() {
-//        Austria austria = new Austria("Austria");
-//        double austriaTicket = austria.getCheapestTickets();
-//        Germany germany = new Germany("Germany");
-//        double germanyTicket = germany.getCheapestTickets();
-//        Italy italy = new Italy("Italy");
-//        double italyTicket = italy.getCheapestTickets();
-//        Spain spain = new Spain("Spain");
-//        double spainTicket = spain.getCheapestTickets();
-//
-//        ArrayList<Double> ticketsList = new ArrayList<>();
-//
-//        ticketsList.add(austriaTicket);
-//        ticketsList.add(germanyTicket);
-//        ticketsList.add(italyTicket);
-//        ticketsList.add(spainTicket);
-//
-//        ArrayList sortedTicketList = ticketsList.stream().sorted().collect(Collectors.toCollection(ArrayList::new));
-//
-//        System.out.println("Cheapest ticket on our service is a " + sortedTicketList.get(0));
-//
-//    }
+    private static void saveToFile(double price, String name, int nrTickets) {
+        File ticketFile = new File("ticket.txt");
+        try (PrintWriter writer = new PrintWriter(ticketFile)) {
+            writer.print("This is a summary of Your booking:\n" +
+                    "The booking is issued for: " + name +
+                    "\nDestination: " + Country.getName() +
+                    " for " + nrTickets + " passengers" +
+                    " on the " + dateFormatter(date) +
+                    " for a total of: " + displayCurrency(price));
+            System.out.println("Your booking was save to file: " + ticketFile.getAbsolutePath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static String dateFormatter(LocalDateTime date) {
         return DateTimeFormatter.ISO_LOCAL_DATE.format(date);
     }
 
     public static double convertRateEUR_SEK(double price) {
-        return price*(rate(euro, krona));
+        return price*(getRateFromURL(euro, krona));
     }
 
-    static String displayCurrency(double price) {
+    private static String displayCurrency(double price) {
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(BookingSystem.currentLocale);
         return currencyFormatter.format(price);
     }
@@ -234,11 +212,12 @@ public class BookingSystem {
         }
     }
 
-    public BookingSystem() throws IOException {
+    private BookingSystem() throws FileNotFoundException {
         menu();
     }
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws FileNotFoundException {
         new BookingSystem();
     }
 }
+
