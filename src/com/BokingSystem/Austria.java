@@ -8,11 +8,7 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 
 public class Austria extends Country {
-    public double price = 0;
-    public LocalDateTime date;
-    public ArrayList<MyLocalDate> austriaList = new ArrayList<>();
-    Locale currentLocale = new Locale("de", "AT");
-    boolean quit = true;
+    private boolean quit = true;
 
     Austria(String name) {
         super(name);
@@ -23,12 +19,13 @@ public class Austria extends Country {
         return price;
     }
 
+    @Override
     public LocalDateTime getDate() {
         return date;
     }
 
     @Override
-    public void getTravellingOptions() {
+    public void getTravellingOptions() throws FileNotFoundException {
         System.out.println("Those are available travelling options to " + getName() + ":\n" +
                 "[1] Flight\n" +
                 "[2] Train\n" +
@@ -44,7 +41,7 @@ public class Austria extends Country {
     }
 
     @Override
-    public LocalDateTime[] convertToArray(File file) {
+    public LocalDateTime[] convertToArray(File file) throws FileNotFoundException {
         try {
             Scanner scn = new Scanner(file);
             dateStrings = scn.nextLine().split(", ");
@@ -56,24 +53,24 @@ public class Austria extends Country {
         } catch (DateTimeParseException e) {
             System.out.println("Could not read file ");
         } catch (FileNotFoundException e) {
-            System.err.println("Could not find file " + file);
+            throw new FileNotFoundException("Could not find file " + file);
         }
         return dates;
     }
 
     @Override
     public void getDate(LocalDateTime[] dates) {
-        austriaList.add(new MyLocalDate(1, dates[0], 109));
-        austriaList.add(new MyLocalDate(2, dates[1], 59));
-        austriaList.add(new MyLocalDate(3, dates[2], 29));
+        infoList.add(new MyLocalDate(1, dates[0], 109));
+        infoList.add(new MyLocalDate(2, dates[1], 59));
+        infoList.add(new MyLocalDate(3, dates[2], 29));
 
         System.out.println("List of available dates and prices:");
-        austriaList.sort((o1, o2) -> (int) (o1.getPrice() - o2.getPrice()));
+        infoList.sort((o1, o2) -> (int) (o1.getPrice() - o2.getPrice()));
 
-        for (MyLocalDate date : austriaList) {
+        for (MyLocalDate date : infoList) {
             System.out.println(date.toString());
         }
-        chooseDate(austriaList);
+        chooseDate(infoList);
     }
 
     @Override
@@ -103,7 +100,10 @@ public class Austria extends Country {
                     date = listDate.get(0).getDate();
                     quit = false;
                 }
-                default -> System.err.println("Please enter a number between 1 and 3");
+                default -> {
+                    System.err.println("Please enter a number between 1 and 3");
+                    chooseDate(infoList);
+                }
             }
         }
     }

@@ -11,8 +11,8 @@ import java.util.*;
 public class BookingSystem {
     private static double price;
     private static LocalDateTime date;
-    public static Currency euro = Currency.getInstance("EUR");
-    public static Currency krona = Currency.getInstance("SEK");
+    private static final Currency euro = Currency.getInstance("EUR");
+    private static final Currency krona = Currency.getInstance("SEK");
     private static final Locale currentLocale = new Locale("sv", "SE");
 
     private void menu() throws FileNotFoundException {
@@ -35,7 +35,7 @@ public class BookingSystem {
                 }
             }
         }
-}
+    }
 
     private static void chosenCountry() throws FileNotFoundException {
         System.out.println("List of available countries: [1]Austria, [2]Germany, [3]Italy, [4]Spain\n" +
@@ -95,27 +95,37 @@ public class BookingSystem {
             System.out.printf("You've chosen to book %d tickets. Your price will be " + totalPrice + euro +
                        "\nPlease enter name for a booking person. ", numberOfTickets);
             String name = getString();
-            System.out.println("Fetching the latest exchange rate to your currency...");
-            double finalPriceInSEK = numberOfTickets*convertRateEUR_SEK(price);
 
             System.out.printf("All right %s! We've got the booking prepared and ready!%n" +
                         "This is a summary of Your booking:%n" +
                         "Destination: " + Country.getName() +
                         " for %d passengers" +
                         " on the " + dateFormatter(date) +
-                        " for a total of: " + displayCurrency(finalPriceInSEK), name, numberOfTickets);
-            saveToFile(finalPriceInSEK, name, numberOfTickets);
+                        " for a total of: " + totalPrice + "EUR\n", name, numberOfTickets);
+
+            getPriceInSEK(totalPrice);
+
+            saveToFile(totalPrice, name, numberOfTickets);
         }
         System.exit(0);
     }
 
+    private static void getPriceInSEK(double price) {
+        System.out.println("Would like to see the price in your currency? Press [y] for yes or anything else to finish");
 
+        if (getString().equals("y")) {
+            double priceInEuro = price*getRateFromURL(euro, krona);
+            System.out.println("Your final price is: " + priceInEuro + "EUR");
+        } else {
+            System.out.println("Thank you! Have a good trip!");
+        }
+    }
 
     /**
-     * This fetches the current currency ratio from API's URL address.
+     * This method fetches the current currency ratio from API's URL address.
      */
     public static double getRateFromURL(Currency from, Currency to){
-        String API_KEY = "bc90f424957001330a57";
+        String API_KEY = "pr_2905d826378644f3b0034f291637c330";
         String USER_AGENT_ID = "Java/"
                 + System.getProperty("java.version");
         try {
@@ -162,7 +172,7 @@ public class BookingSystem {
                     " for " + nrTickets + " passengers" +
                     " on the " + dateFormatter(date) +
                     " for a total of: " + displayCurrency(price));
-            System.out.println("Your booking was save to file: " + ticketFile.getAbsolutePath());
+            System.out.println("Your booking was saved to file: " + ticketFile.getAbsolutePath());
         } catch (IOException e) {
             e.printStackTrace();
         }

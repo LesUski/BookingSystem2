@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class MyLocalDate {
-    int number;
-    LocalDateTime date;
-    double price;
+    private int number;
+    private LocalDateTime date;
+    private double price;
 
     public MyLocalDate(int number, LocalDateTime date, double price) {
         this.number = number;
@@ -29,6 +29,6 @@ public class MyLocalDate {
     @Override
     public String toString() {
         String strDate = DateTimeFormatter.ISO_LOCAL_DATE.format(date);
-        return "No." + number + ", date: " +  strDate + ", price: " + price + "EUR";
+        return "No." + getNumber() + ", date: " +  strDate + ", price: " + getPrice() + "EUR";
     }
 }
