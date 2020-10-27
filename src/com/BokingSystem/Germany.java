@@ -56,6 +56,7 @@ public class Germany extends Country {
         }
         return dates;
     }
+
     @Override
     public void getDate(LocalDateTime[] dates) {
 
@@ -64,9 +65,9 @@ public class Germany extends Country {
         infoList.add(new MyLocalDate(3, dates[2], 35));
 
         System.out.println("List of available dates and prices:");
-        Collections.sort(infoList, (o1, o2) -> (int) (o1.getPrice()-o2.getPrice()));
+        Collections.sort(infoList, (o1, o2) -> (int) (o1.getPrice() - o2.getPrice()));
 
-        for(MyLocalDate date: infoList) {
+        for (MyLocalDate date : infoList) {
             System.out.println(date.toString());
         }
         chooseDate(infoList);
@@ -83,18 +84,21 @@ public class Germany extends Country {
                     listDate.stream().filter(myDate -> myDate.getNumber() == 1).forEach(System.out::println);
                     price = listDate.get(2).getPrice();
                     date = listDate.get(2).getDate();
+                    quit = false;
                 }
                 case 2 -> {
                     System.out.print("You've chosen the ");
                     listDate.stream().filter(myDate -> myDate.getNumber() == 2).forEach(System.out::println);
                     price = listDate.get(0).getPrice();
                     date = listDate.get(0).getDate();
+                    quit = false;
                 }
                 case 3 -> {
                     System.out.print("You've chosen the ");
                     listDate.stream().filter(myDate -> myDate.getNumber() == 3).forEach(System.out::println);
                     price = listDate.get(1).getPrice();
                     date = listDate.get(1).getDate();
+                    quit = false;
                 }
                 default -> {
                     System.out.println("Please provide a number between 1 and 3");

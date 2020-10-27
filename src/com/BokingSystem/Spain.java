@@ -57,7 +57,7 @@ public class Spain extends Country {
         }
         return dates;
     }
-    
+
     @Override
     public void getDate(LocalDateTime[] dates) {
         infoList.add(new MyLocalDate(1, dates[0], 89));
@@ -65,40 +65,45 @@ public class Spain extends Country {
         infoList.add(new MyLocalDate(3, dates[2], 129));
 
         System.out.println("List of available dates and prices:");
-        Collections.sort(infoList, (o1, o2) -> (int) (o1.getPrice()-o2.getPrice()));
+        Collections.sort(infoList, (o1, o2) -> (int) (o1.getPrice() - o2.getPrice()));
 
-        for(MyLocalDate date: infoList) {
+        for (MyLocalDate date : infoList) {
             System.out.println(date.toString());
         }
         chooseDate(infoList);
     }
 
     @Override
-    public void chooseDate(ArrayList<MyLocalDate> listDate){
+    public void chooseDate(ArrayList<MyLocalDate> listDate) {
         System.out.print("Would you like to choose one of those days? ");
 
-        switch (getInt()) {
-            case 1 -> {
-                System.out.print("You've chosen the ");
-                listDate.stream().filter(myDate -> myDate.getNumber() == 1).forEach(System.out::println);
-                price = listDate.get(1).getPrice();
-                date = listDate.get(1).getDate();
-            }
-            case 2 -> {
-                System.out.print("You've chosen the ");
-                listDate.stream().filter(myDate -> myDate.getNumber() == 2).forEach(System.out::println);
-                price = listDate.get(0).getPrice();
-                date = listDate.get(0).getDate();
-            }
-            case 3 -> {
-                System.out.print("You've chosen the ");
-                listDate.stream().filter(myDate -> myDate.getNumber() == 3).forEach(System.out::println);
-                price = listDate.get(2).getPrice();
-                date = listDate.get(2).getDate();
-            }
-            default -> {
-                System.err.println("Please enter a number between 1 and 3");
-                chooseDate(infoList);
+        while (quit) {
+            switch (getInt()) {
+                case 1 -> {
+                    System.out.print("You've chosen the ");
+                    listDate.stream().filter(myDate -> myDate.getNumber() == 1).forEach(System.out::println);
+                    price = listDate.get(1).getPrice();
+                    date = listDate.get(1).getDate();
+                    quit = false;
+                }
+                case 2 -> {
+                    System.out.print("You've chosen the ");
+                    listDate.stream().filter(myDate -> myDate.getNumber() == 2).forEach(System.out::println);
+                    price = listDate.get(0).getPrice();
+                    date = listDate.get(0).getDate();
+                    quit = false;
+                }
+                case 3 -> {
+                    System.out.print("You've chosen the ");
+                    listDate.stream().filter(myDate -> myDate.getNumber() == 3).forEach(System.out::println);
+                    price = listDate.get(2).getPrice();
+                    date = listDate.get(2).getDate();
+                    quit = false;
+                }
+                default -> {
+                    System.err.println("Please enter a number between 1 and 3");
+                    chooseDate(infoList);
+                }
             }
         }
     }
