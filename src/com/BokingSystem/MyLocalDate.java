@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class MyLocalDate {
+
     private int number;
     private LocalDateTime date;
     private double price;

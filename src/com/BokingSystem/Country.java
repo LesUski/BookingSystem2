@@ -8,6 +8,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 abstract class Country {
+
     private static String name;
     public double price;
     public LocalDateTime date;
@@ -18,17 +19,6 @@ abstract class Country {
     public Country(String name) {
         this.name = name;
     }
-
-    public static String getName() {
-        return name;
-    }
-    public abstract double getPrice();
-    public abstract LocalDateTime getDate();
-
-    public abstract void getDate(LocalDateTime[] array);
-    public abstract LocalDateTime[] convertToArray(File file) throws FileNotFoundException;
-    public abstract void getTravellingOptions() throws FileNotFoundException;
-    public abstract void chooseDate(ArrayList<MyLocalDate> listDate);
 
     public int getInt() {
         Scanner s = new Scanner(System.in);
@@ -42,4 +32,22 @@ abstract class Country {
             }
         }
     }
+
+    public static String getName() {
+        return name;
+    }
+
+    public abstract double getPrice();
+
+    public abstract LocalDateTime getDate();
+
+    public abstract void getDate(LocalDateTime[] array);
+
+    public abstract LocalDateTime[] convertToArray(File file) throws FileNotFoundException;
+
+    public abstract void getTravellingOptions() throws FileNotFoundException;
+
+    public abstract void chooseDate(ArrayList<MyLocalDate> listDate);
+
+
 }

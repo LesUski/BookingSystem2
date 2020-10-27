@@ -23,5 +23,4 @@ class ConverterTest {
     void convertEURtoSEK() {
         assertEquals(309, Converter.convertEURtoSEK(euro, krona, 30), TEST_DELTA);
     }
-
 }

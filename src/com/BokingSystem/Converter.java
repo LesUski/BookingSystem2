@@ -27,6 +27,11 @@ public class Converter {
         return status;
     }
 
+    /**
+     * The method fetches the current exchange rates from fixer.io API
+     * @param from - the currency that we want to change
+     * @param to - the  currency that we want to change to
+     */
     public static double convertEURtoSEK(Currency from, Currency to, double amount) {
         if (getURLStatus() != 200) {
             throw new RuntimeException("HttpResponse Code: " + getURLStatus());
@@ -46,16 +51,17 @@ public class Converter {
 
                 JSONParser jsonParser = new JSONParser();
                 JSONObject jsonObject = (JSONObject) jsonParser.parse(new InputStreamReader((InputStream) connection.getContent()));
-
-                Double result = (Double) jsonObject.get("result");
-
                 connection.disconnect();
 
-                return result;
+                return convertToDouble(jsonObject);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         return 0.0;
+    }
+
+    private static double convertToDouble(JSONObject object) {
+        return (Double) object.get("result");
     }
 }

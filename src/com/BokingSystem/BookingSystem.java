@@ -13,7 +13,11 @@ public class BookingSystem {
     private final Currency krona = Currency.getInstance("SEK");
     private final Locale currentLocale = new Locale("sv", "SE");
 
-    private void menu() throws IOException {
+    BookingSystem() throws IOException {
+        showBookingMenu();
+    }
+
+    private void showBookingMenu() throws IOException {
         System.out.println("\n\t\tWelcome to Booking System!\n" +
                 "=======================================================\n" +
                 "Please choose your option:\n" +
@@ -22,7 +26,7 @@ public class BookingSystem {
                 "=======================================================");
         while (true) {
             switch (getInt()) {
-                case 1 -> chosenCountry();
+                case 1 -> chooseDestination();
                 case 2 -> {
                     System.out.println("Exiting...");
                     return;
@@ -35,7 +39,7 @@ public class BookingSystem {
         }
     }
 
-    private void chosenCountry() throws IOException {
+    private void chooseDestination() throws IOException {
         System.out.println("List of available countries: [1]Austria, [2]Germany, [3]Italy, [4]Spain\n" +
                 "press [5] to exit");
 
@@ -46,28 +50,28 @@ public class BookingSystem {
                     austria.getTravellingOptions();
                     price = austria.getPrice();
                     date = austria.getDate();
-                    passengerDetails();
+                    getAmountOfTickets();
                 }
                 case 2 -> {
                     Germany germany = new Germany("Germany");
                     germany.getTravellingOptions();
                     price = germany.getPrice();
                     date = germany.getDate();
-                    passengerDetails();
+                    getAmountOfTickets();
                 }
                 case 3 -> {
                     Italy italy = new Italy("Italy");
                     italy.getTravellingOptions();
                     price = italy.getPrice();
                     date = italy.getDate();
-                    passengerDetails();
+                    getAmountOfTickets();
                 }
                 case 4 -> {
                     Spain spain = new Spain("Spain");
                     spain.getTravellingOptions();
                     price = spain.getPrice();
                     date = spain.getDate();
-                    passengerDetails();
+                    getAmountOfTickets();
                 }
                 case 5 -> {
                     System.out.println("Exiting...");
@@ -81,30 +85,46 @@ public class BookingSystem {
         }
     }
 
-    private void passengerDetails() throws IOException {
+    private void getAmountOfTickets() throws IOException {
         System.out.println("How many tickets?");
         int numberOfTickets = getInt();
         if (numberOfTickets <= 0) {
             System.out.println("Wrong number of tickets! Minimum value is 1!");
-            passengerDetails();
+            getAmountOfTickets();
         } else {
-            double totalPriceEUR = numberOfTickets * price;
-
-            System.out.printf("You've chosen to book %d tickets. Your price will be " + totalPriceEUR + euro +
-                    "\nPlease enter name for a booking person. ", numberOfTickets);
-            String name = getString();
-            System.out.println("Fetching the latest currency rates...");
-            double totalPriceConvertedToSEK = Converter.convertEURtoSEK(euro, krona, totalPriceEUR);
-            System.out.printf("All right %s! We've got the booking prepared and ready!%n" +
-                    "This is a summary of Your booking:%n" +
-                    "Destination: " + Country.getName() +
-                    " for %d passengers" +
-                    " on the " + dateFormatter(date) +
-                    " for a total of: " + displayCurrency(totalPriceConvertedToSEK) + "\n", name, numberOfTickets);
-
-            saveToFile(totalPriceConvertedToSEK, name, numberOfTickets);
+            bookingDetails(numberOfTickets);
         }
+    }
+
+    private void bookingDetails(int tickets) throws IOException {
+        double totalPriceEUR = tickets * price;
+
+        System.out.printf("You've chosen to book %d tickets. Your price will be " + totalPriceEUR + euro +
+                "\nPlease enter name for a booking person. ", tickets);
+        String name = getString();
+
+        System.out.println("Fetching the latest currency rates...");
+        double totalPriceConvertedToSEK = Converter.convertEURtoSEK(euro, krona, totalPriceEUR);
+
+        System.out.printf("All right %s! We've got the booking prepared and ready!%n" +
+                "This is a summary of Your booking:%n" +
+                "Destination: " + Country.getName() +
+                " for %d passengers" +
+                " on the " + dateFormatter(date) +
+                " for a total of: " + displayCurrency(totalPriceConvertedToSEK) + "\n", name, tickets);
+
+        saveToFile(totalPriceConvertedToSEK, name, tickets);
+
         System.exit(0);
+    }
+
+    String dateFormatter(LocalDateTime date) {
+        return DateTimeFormatter.ISO_LOCAL_DATE.format(date);
+    }
+
+    private String displayCurrency(double price) {
+        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(currentLocale);
+        return currencyFormatter.format(price);
     }
 
     void saveToFile(double price, String name, int nrTickets) throws IOException {
@@ -120,15 +140,6 @@ public class BookingSystem {
         } catch (IOException e) {
             throw new IOException("Couldn't write to file");
         }
-    }
-
-    public String dateFormatter(LocalDateTime date) {
-        return DateTimeFormatter.ISO_LOCAL_DATE.format(date);
-    }
-
-    private String displayCurrency(double price) {
-        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance(currentLocale);
-        return currencyFormatter.format(price);
     }
 
     private String getString() {
@@ -161,10 +172,6 @@ public class BookingSystem {
                 System.err.println("Incorrect input! Type in a positive number");
             }
         }
-    }
-
-    BookingSystem() throws IOException {
-        menu();
     }
 
     public static void main(String[] args) throws IOException {
