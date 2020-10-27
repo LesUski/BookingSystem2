@@ -1,14 +1,10 @@
 package com.BokingSystem;
 
 import org.junit.jupiter.api.Test;
-
-import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Currency;
-
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class BookingSystemTest {
@@ -37,7 +33,6 @@ class BookingSystemTest {
         double actual = BookingSystem.getRateFromURL(euro, krona);
         assertEquals(expected, actual, TEST_DELTA);
     }
-    
 
     @Test
     void testConvertRateEUR_SEK() {
@@ -45,20 +40,22 @@ class BookingSystemTest {
         assertEquals(103.4, BookingSystem.convertRateEUR_SEK(price), TEST_DELTA);
     }
 
-//    @Test
-//    void checkExceptionInSaveToFile() {
-//        
-//    }
+    @Test
+    void convertPriceToSEK() throws FileNotFoundException {
+        assertEquals(200, BookingSystem.getPriceInSEK(20));
+    }
 
-//    @Test
-//    void testRateConnectionStatus() throws IOException {
-//        int statusExpected = 200;
-//        int statusActual = BookingSystem.rate(euro,krona);
-//        assertEquals(statusExpected, statusActual);
-//    }
-//    @Test
-//    void checkExceptionInGetRateFromURL() {
-//    assertThrows(IOException.class, () -> BookingSystem.getRateFromURL(euro, e));
-//    }
+    @Test
+    void checkExceptionInSaveToFile() {
+        assertThrows(NullPointerException.class, () -> BookingSystem.saveToFile(10,"Name",1));
+    }
+
+    @Test
+    void gettInt() {
+        ByteArrayOutputStream outContent = new ByteArrayOutputStream();
+        System.setOut(new PrintStream(outContent));
+        //BookingSystem.getInt();
+        assertEquals(5, outContent.toString().trim());
+    }
 
 }

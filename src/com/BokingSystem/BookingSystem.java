@@ -15,7 +15,7 @@ public class BookingSystem {
     private static final Currency krona = Currency.getInstance("SEK");
     private static final Locale currentLocale = new Locale("sv", "SE");
 
-    private void menu() throws FileNotFoundException {
+    private void menu() throws IOException {
         System.out.println("\n\t\tWelcome to Booking System!\n" +
                 "=======================================================\n" +
                 "Please choose your option:\n" +
@@ -37,7 +37,7 @@ public class BookingSystem {
         }
     }
 
-    private static void chosenCountry() throws FileNotFoundException {
+    private static void chosenCountry() throws IOException {
         System.out.println("List of available countries: [1]Austria, [2]Germany, [3]Italy, [4]Spain\n" +
                 "press [5] to exit");
 
@@ -83,7 +83,7 @@ public class BookingSystem {
         }
     }
 
-    private static void passengerDetails(){
+    private static void passengerDetails() throws IOException {
         System.out.println("How many tickets?");
         int numberOfTickets = getInt();
         if (numberOfTickets <= 0) {
@@ -110,15 +110,15 @@ public class BookingSystem {
         System.exit(0);
     }
 
-    private static void getPriceInSEK(double price) {
+    static double getPriceInSEK(double price) {
         System.out.println("Would like to see the price in your currency? Press [y] for yes or anything else to finish");
-
+        double priceInEuro = price*getRateFromURL(euro, krona);
         if (getString().equals("y")) {
-            double priceInEuro = price*getRateFromURL(euro, krona);
             System.out.println("Your final price is: " + priceInEuro + "EUR");
         } else {
             System.out.println("Thank you! Have a good trip!");
         }
+        return priceInEuro;
     }
 
     /**
@@ -163,7 +163,7 @@ public class BookingSystem {
         return 0.0;
     }
 
-    private static void saveToFile(double price, String name, int nrTickets) {
+    static void saveToFile(double price, String name, int nrTickets) throws IOException {
         File ticketFile = new File("ticket.txt");
         try (PrintWriter writer = new PrintWriter(ticketFile)) {
             writer.print("This is a summary of Your booking:\n" +
@@ -174,7 +174,7 @@ public class BookingSystem {
                     " for a total of: " + displayCurrency(price));
             System.out.println("Your booking was saved to file: " + ticketFile.getAbsolutePath());
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IOException("Couldn't write to file");
         }
     }
 
@@ -203,13 +203,14 @@ public class BookingSystem {
                 System.out.println("NPE! Please type your answer: ");
                 string = s.next();
             }
+            s.close();
         } catch (InputMismatchException e) {
             return "Incorrect answer";
         }
         return string;
     }
 
-    private static int getInt() {
+    static int getInt() {
         Scanner s = new Scanner(System.in);
         System.out.print("Please type your choice here: ");
         while(true) {
@@ -222,11 +223,11 @@ public class BookingSystem {
         }
     }
 
-    private BookingSystem() throws FileNotFoundException {
+    private BookingSystem() throws IOException {
         menu();
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
         new BookingSystem();
     }
 }
