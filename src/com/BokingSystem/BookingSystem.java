@@ -8,7 +8,7 @@ import java.util.*;
 
 public class BookingSystem {
     private double price;
-    private LocalDateTime date;
+    private static LocalDateTime date;
     private final Currency euro = Currency.getInstance("EUR");
     private final Currency krona = Currency.getInstance("SEK");
     private final Locale currentLocale = new Locale("sv", "SE");
@@ -118,7 +118,7 @@ public class BookingSystem {
         System.exit(0);
     }
 
-    String dateFormatter(LocalDateTime date) {
+    static String dateFormatter(LocalDateTime date) {
         return DateTimeFormatter.ISO_LOCAL_DATE.format(date);
     }
 
@@ -127,7 +127,7 @@ public class BookingSystem {
         return currencyFormatter.format(price);
     }
 
-    void saveToFile(double price, String name, int nrTickets) throws IOException {
+    static void saveToFile(double price, String name, int nrTickets) throws IOException {
         File ticketFile = new File("ticket.txt");
         try (PrintWriter writer = new PrintWriter(ticketFile)) {
             writer.print("This is a summary of Your booking:\n" +
